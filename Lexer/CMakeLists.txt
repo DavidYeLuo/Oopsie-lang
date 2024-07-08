@@ -1,0 +1,5 @@
+project(lexer VERSION 0.1)
+add_library(lexer)
+target_include_directories(lexer PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)
+# add_executable(lexer)
+target_sources(lexer PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/Lexer.cpp)
