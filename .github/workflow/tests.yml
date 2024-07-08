@@ -1,0 +1,27 @@
+name: Build + Test
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: apt-get dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install unzip cmake lsb-release software-properties-common gnupg ninja-build
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -GNinja
+          ninja -j4
+      - name: Test
+        run: |
+          cd build
+          ./bin/Tests
