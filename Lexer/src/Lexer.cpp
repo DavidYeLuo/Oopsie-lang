@@ -57,6 +57,8 @@ Lexer::Token Lexer::Lexer::Lex() {
       // TODO: avoid using hardcoded keywords
       if (lexeme == "int") {
         return Token(TokenType::INTEGER_KEYWORD, lexeme);
+      } else if (lexeme == "string") {
+        return Token(TokenType::STRING_KEYWORD, lexeme);
       }
       return Token(TokenType::IDENTIFIER, lexeme);
     }

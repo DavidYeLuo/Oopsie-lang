@@ -34,7 +34,7 @@ TEST(LexerTest, Init_Integer_Variable) {
   EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
 }
 TEST(LexerTest, Init_String_Variable) {
-  constexpr char input[] = "string str = \"this is my string\"";
+  constexpr char input[] = "string str = \"this is my string\";";
   std::stringstream ss(input);
   Lexer::Lexer lexer(ss);
   EXPECT_TOKEN(lexer.Lex(), Lexer::STRING_KEYWORD, "string");
