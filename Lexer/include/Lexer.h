@@ -9,6 +9,7 @@ enum KeywordType { INT, BOOL, CHAR, STRING, VOID, FLOAT };
 enum TokenType {
   // Keywords
   INTEGER_KEYWORD,
+  STRING_KEYWORD,
 
   // Literals
   INTEGER_LIT,
