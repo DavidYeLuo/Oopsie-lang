@@ -10,13 +10,21 @@ enum TokenType {
   // Keywords
   INTEGER_KEYWORD,
   STRING_KEYWORD,
+  BOOL_KEYWORD,
 
   // Literals
   INTEGER_LIT,
   STRING_LIT,
+  TRUE_LIT,
+  FALSE_LIT,
+
+  // Equality operators
+  BANG_EQUAL,  // !=
+  EQUAL_EQUAL, // ==
 
   // Operators
   ASSIGNMENT, // =
+  BANG,       // !
   // PLUS,
   // MINUS,
   // MUL,

@@ -22,8 +22,24 @@ Lexer::Token Lexer::Lexer::Lex() {
     return Token(TokenType::RBRACE, "}");
   case ';':
     return Token(TokenType::SEMICOLON, ";");
+  case '!':
+    c = _input.get();
+    if (c == '=') {
+      return Token(TokenType::BANG_EQUAL, "!=");
+    } else {
+      hasLookAhead = true;
+      return Token(TokenType::BANG, "!=");
+    }
   case '=':
-    return Token(TokenType::ASSIGNMENT, "=");
+    c = _input.get();
+    if (c == '=')
+      return Token(TokenType::EQUAL_EQUAL, "==");
+    else if (c == '!')
+      return Token(TokenType::BANG_EQUAL, "!=");
+    else {
+      hasLookAhead = true;
+      return Token(TokenType::ASSIGNMENT, "=");
+    }
   case EOF:
     return Token(TokenType::EOF_, "");
   default:
@@ -59,7 +75,14 @@ Lexer::Token Lexer::Lexer::Lex() {
         return Token(TokenType::INTEGER_KEYWORD, lexeme);
       } else if (lexeme == "string") {
         return Token(TokenType::STRING_KEYWORD, lexeme);
+      } else if (lexeme == "bool") {
+        return Token(TokenType::BOOL_KEYWORD, lexeme);
+      } else if (lexeme == "true") {
+        return Token(TokenType::TRUE_LIT, lexeme);
+      } else if (lexeme == "false") {
+        return Token(TokenType::FALSE_LIT, lexeme);
       }
+
       return Token(TokenType::IDENTIFIER, lexeme);
     }
   }
