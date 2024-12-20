@@ -44,5 +44,27 @@ TEST(LexerTest, Init_String_Variable) {
   EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
   EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
 }
+TEST(LexerTest, Init_Bool_Variable_As_True) {
+  constexpr char input[] = "bool isTrue = true;";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+  EXPECT_TOKEN(lexer.Lex(), Lexer::BOOL_KEYWORD, "bool");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::IDENTIFIER, "isTrue");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::ASSIGNMENT, "=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::TRUE_LIT, "true");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
+}
+TEST(LexerTest, Init_Bool_Variable_As_False) {
+  constexpr char input[] = "bool isTrue = false;";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+  EXPECT_TOKEN(lexer.Lex(), Lexer::BOOL_KEYWORD, "bool");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::IDENTIFIER, "isTrue");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::ASSIGNMENT, "=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::FALSE_LIT, "false");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
+}
 
 } // namespace
