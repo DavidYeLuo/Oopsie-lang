@@ -66,5 +66,31 @@ TEST(LexerTest, Init_Bool_Variable_As_False) {
   EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
   EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
 }
+TEST(LexerTest, Init_Integer_Sum) {
+  constexpr char input[] = "int i = 9 + 10;";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_KEYWORD, "int");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::IDENTIFIER, "i");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::ASSIGNMENT, "=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::PLUS, "+");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
+}
+TEST(LexerTest, Init_Integer_Minus) {
+  constexpr char input[] = "int i = 9 - 10;";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_KEYWORD, "int");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::IDENTIFIER, "i");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::ASSIGNMENT, "=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::MINUS, "-");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
+}
 
 } // namespace

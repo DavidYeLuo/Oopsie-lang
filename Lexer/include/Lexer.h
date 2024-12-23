@@ -25,8 +25,8 @@ enum TokenType {
   // Operators
   ASSIGNMENT, // =
   BANG,       // !
-  // PLUS,
-  // MINUS,
+  PLUS,
+  MINUS,
   // MUL,
   // DIV,
   // MOD,
