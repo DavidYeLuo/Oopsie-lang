@@ -27,9 +27,9 @@ enum TokenType {
   BANG,       // !
   PLUS,
   MINUS,
-  // MUL,
-  // DIV,
-  // MOD,
+  MUL,
+  DIV,
+  MOD,
 
   IDENTIFIER,
 

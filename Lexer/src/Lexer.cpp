@@ -26,6 +26,12 @@ Lexer::Token Lexer::Lexer::Lex() {
     return Token(TokenType::PLUS, "+");
   case '-':
     return Token(TokenType::MINUS, "-");
+  case '*':
+    return Token(TokenType::MUL, "*");
+  case '/':
+    return Token(TokenType::DIV, "/");
+  case '%':
+    return Token(TokenType::MOD, "%");
   case '!':
     c = _input.get();
     if (c == '=') {
