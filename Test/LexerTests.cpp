@@ -131,5 +131,49 @@ TEST(LexerTest, Init_Integer_Mod) {
   EXPECT_TOKEN(lexer.Lex(), Lexer::SEMICOLON, ";");
   EXPECT_TOKEN(lexer.Lex(), Lexer::EOF_, "");
 }
+TEST(LexerTest, Comparison_Less) {
+  constexpr char input[] = "10 < 9";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
 
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::LESS, "<");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+}
+TEST(LexerTest, Comparison_Less_Equal) {
+  constexpr char input[] = "10 <= 9";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::LESS_EQUAL, "<=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+}
+TEST(LexerTest, Comparison_Greater) {
+  constexpr char input[] = "10 > 9";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::GREATER, ">");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+}
+TEST(LexerTest, Comparison_Greater_Equal) {
+  constexpr char input[] = "10 >= 9";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::GREATER_EQUAL, ">=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+}
+TEST(LexerTest, Comparison_Not_Eq) {
+  constexpr char input[] = "10 != 9";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "10");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::BANG_EQUAL, "!=");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
+}
 } // namespace

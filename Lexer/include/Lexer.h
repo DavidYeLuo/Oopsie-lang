@@ -22,6 +22,12 @@ enum TokenType {
   BANG_EQUAL,  // !=
   EQUAL_EQUAL, // ==
 
+  // Comparison Operators
+  GREATER,
+  GREATER_EQUAL,
+  LESS,
+  LESS_EQUAL,
+
   // Operators
   ASSIGNMENT, // =
   BANG,       // !

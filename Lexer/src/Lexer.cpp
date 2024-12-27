@@ -32,6 +32,14 @@ Lexer::Token Lexer::Lexer::Lex() {
     return Token(TokenType::DIV, "/");
   case '%':
     return Token(TokenType::MOD, "%");
+  case '=':
+    c = _input.get();
+    if (c == '=')
+      return Token(TokenType::EQUAL_EQUAL, "==");
+    else {
+      hasLookAhead = true;
+      return Token(TokenType::ASSIGNMENT, "=");
+    }
   case '!':
     c = _input.get();
     if (c == '=') {
@@ -40,15 +48,21 @@ Lexer::Token Lexer::Lexer::Lex() {
       hasLookAhead = true;
       return Token(TokenType::BANG, "!=");
     }
-  case '=':
+  case '>':
     c = _input.get();
     if (c == '=')
-      return Token(TokenType::EQUAL_EQUAL, "==");
-    else if (c == '!')
-      return Token(TokenType::BANG_EQUAL, "!=");
+      return Token(TokenType::GREATER_EQUAL, ">=");
     else {
       hasLookAhead = true;
-      return Token(TokenType::ASSIGNMENT, "=");
+      return Token(TokenType::GREATER, ">");
+    }
+  case '<':
+    c = _input.get();
+    if (c == '=')
+      return Token(TokenType::LESS_EQUAL, "<=");
+    else {
+      hasLookAhead = true;
+      return Token(TokenType::LESS, "<");
     }
   case EOF:
     return Token(TokenType::EOF_, "");
