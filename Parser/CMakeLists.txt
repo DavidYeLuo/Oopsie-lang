@@ -1,0 +1,5 @@
+project(parser VERSION 0.1)
+add_library(parser)
+target_include_directories(parser PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include/)
+target_sources(parser PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/Parser.cpp)
+target_sources(parser PRIVATE ${CMAKE_CURRENT_LIST_DIR}/src/AstPrinter.cpp)
