@@ -10,18 +10,32 @@ enum TokenType {
   // Keywords
   INTEGER_KEYWORD,
   STRING_KEYWORD,
+  BOOL_KEYWORD,
 
   // Literals
   INTEGER_LIT,
   STRING_LIT,
+  TRUE_LIT,
+  FALSE_LIT,
+
+  // Equality operators
+  BANG_EQUAL,  // !=
+  EQUAL_EQUAL, // ==
+
+  // Comparison Operators
+  GREATER,
+  GREATER_EQUAL,
+  LESS,
+  LESS_EQUAL,
 
   // Operators
   ASSIGNMENT, // =
-  // PLUS,
-  // MINUS,
-  // MUL,
-  // DIV,
-  // MOD,
+  BANG,       // !
+  PLUS,
+  MINUS,
+  MUL,
+  DIV,
+  MOD,
 
   IDENTIFIER,
 

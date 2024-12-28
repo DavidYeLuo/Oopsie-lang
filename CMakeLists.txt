@@ -9,4 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(Lexer)
+add_subdirectory(Parser)
 add_subdirectory(Test)
+
+target_link_libraries(parser PUBLIC lexer)
+target_link_libraries(Tests GTest::gtest_main lexer parser)

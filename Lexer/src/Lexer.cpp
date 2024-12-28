@@ -22,8 +22,48 @@ Lexer::Token Lexer::Lexer::Lex() {
     return Token(TokenType::RBRACE, "}");
   case ';':
     return Token(TokenType::SEMICOLON, ";");
+  case '+':
+    return Token(TokenType::PLUS, "+");
+  case '-':
+    return Token(TokenType::MINUS, "-");
+  case '*':
+    return Token(TokenType::MUL, "*");
+  case '/':
+    return Token(TokenType::DIV, "/");
+  case '%':
+    return Token(TokenType::MOD, "%");
   case '=':
-    return Token(TokenType::ASSIGNMENT, "=");
+    c = _input.get();
+    if (c == '=')
+      return Token(TokenType::EQUAL_EQUAL, "==");
+    else {
+      hasLookAhead = true;
+      return Token(TokenType::ASSIGNMENT, "=");
+    }
+  case '!':
+    c = _input.get();
+    if (c == '=') {
+      return Token(TokenType::BANG_EQUAL, "!=");
+    } else {
+      hasLookAhead = true;
+      return Token(TokenType::BANG, "!=");
+    }
+  case '>':
+    c = _input.get();
+    if (c == '=')
+      return Token(TokenType::GREATER_EQUAL, ">=");
+    else {
+      hasLookAhead = true;
+      return Token(TokenType::GREATER, ">");
+    }
+  case '<':
+    c = _input.get();
+    if (c == '=')
+      return Token(TokenType::LESS_EQUAL, "<=");
+    else {
+      hasLookAhead = true;
+      return Token(TokenType::LESS, "<");
+    }
   case EOF:
     return Token(TokenType::EOF_, "");
   default:
@@ -59,7 +99,14 @@ Lexer::Token Lexer::Lexer::Lex() {
         return Token(TokenType::INTEGER_KEYWORD, lexeme);
       } else if (lexeme == "string") {
         return Token(TokenType::STRING_KEYWORD, lexeme);
+      } else if (lexeme == "bool") {
+        return Token(TokenType::BOOL_KEYWORD, lexeme);
+      } else if (lexeme == "true") {
+        return Token(TokenType::TRUE_LIT, lexeme);
+      } else if (lexeme == "false") {
+        return Token(TokenType::FALSE_LIT, lexeme);
       }
+
       return Token(TokenType::IDENTIFIER, lexeme);
     }
   }
