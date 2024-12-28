@@ -38,6 +38,6 @@ TEST(AstPrinter_Test, SumTwoInt) {
   Parser::AstPrinter printer(ss);
 
   sum.Accept(printer);
-  ASSERT_EQ(ss.str(), "(+ (int 23) (int 100))");
+  ASSERT_EQ(ss.str(), "(+ (int 100) (int 23))");
 }
 } // namespace

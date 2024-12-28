@@ -17,11 +17,11 @@ void Parser::AstPrinter::VisitUnaryExpr(Parser::Unary &expr) {
 void Parser::AstPrinter::VisitBinaryExpr(Parser::Binary &expr) {
   Parser::Expr *right = expr.right.get();
   Parser::Expr *left = expr.left.get();
-  Parenthesize(expr.op.lexeme, {right, left});
+  Parenthesize(expr.op.lexeme, {left, right});
 }
 void Parser::AstPrinter::VisitGroupingExpr(Parser::Grouping &expr) {
   Parser::Expr *expression = expr.expression.get();
-  Parenthesize("Group", {expression});
+  Parenthesize("group", {expression});
 }
 void Parser::AstPrinter::VisitLiteralExpr(Parser::Literal<int> &expr) {
   ss << "(int " << expr.value << ")";

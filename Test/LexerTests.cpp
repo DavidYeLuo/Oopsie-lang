@@ -176,4 +176,17 @@ TEST(LexerTest, Comparison_Not_Eq) {
   EXPECT_TOKEN(lexer.Lex(), Lexer::BANG_EQUAL, "!=");
   EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "9");
 }
+TEST(LexerTest, IntegerGrouping) {
+  constexpr char input[] = "(1 + 3 + 4)";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+
+  EXPECT_TOKEN(lexer.Lex(), Lexer::LPAREN, "(");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "1");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::PLUS, "+");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "3");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::PLUS, "+");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::INTEGER_LIT, "4");
+  EXPECT_TOKEN(lexer.Lex(), Lexer::RPAREN, ")");
+}
 } // namespace

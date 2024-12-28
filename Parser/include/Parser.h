@@ -91,6 +91,10 @@ private:
 
 class RecursiveDescentParser {
 public:
+  RecursiveDescentParser(const std::vector<Lexer::Token> tokens)
+      : tokens(tokens) {
+    current = 0;
+  }
   std::unique_ptr<Expr> Parse();
 
 private:
@@ -105,7 +109,6 @@ private:
   std::unique_ptr<Expr> Factor();
   std::unique_ptr<Expr> Unary();
   std::unique_ptr<Expr> Primary();
-  std::unique_ptr<Expr> Binary();
 
   // Helper for parsing
   bool Check(Lexer::TokenType type);
@@ -114,5 +117,6 @@ private:
   Lexer::Token Peek();
   Lexer::Token Previous();
   Lexer::Token Advance();
+  Lexer::Token Consume(Lexer::TokenType type, std::string msg);
 };
 } // namespace Parser
