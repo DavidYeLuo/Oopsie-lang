@@ -1,6 +1,8 @@
 #pragma once
 #include <istream>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace Lexer {
 
@@ -59,14 +61,31 @@ public:
 
 class Lexer {
 public:
-  Lexer(std::istream &input) : _input(input) {}
+  Lexer(std::istream &input) : _input(input) {
+    // Start at a known character
+    if (!_input.eof()) {
+      c = _input.get();
+    }
+  }
   Token Lex();
   Token token = Token(TokenType::EOF_, "");
 
 private:
   std::istream &_input;
-  // Lookahead are extra characters peeked
-  char c; // Current character. May contain lookahead
+  char c;
   bool hasLookAhead = false;
+
+  /// Move on to the next character
+  char Advance();
+  /// Returns true if End of File
+  bool IsAtEnd();
+
+  /// Returns true when current character is c
+  bool Check(char c);
+
+  /// Returns true and advance when character is c
+  bool Match(char c);
+  /// Returns true and advance when c is one of the characters
+  bool Match(const std::vector<char> &characters);
 };
 } // namespace Lexer

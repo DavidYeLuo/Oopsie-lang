@@ -1,114 +1,128 @@
 #include "Lexer.h"
 #include <cstdio>
+
+namespace Lexer {
+const std::unordered_map<char, TokenType> simpleSymbolMap{
+    {'(', TokenType::LPAREN},    {')', TokenType::RPAREN},
+    {'{', TokenType::LBRACE},    {'}', TokenType::RBRACE},
+
+    {';', TokenType::SEMICOLON},
+
+    {'+', TokenType::PLUS},      {'-', TokenType::MINUS},
+    {'*', TokenType::MUL},       {'/', TokenType::DIV},
+    {'%', TokenType::MOD},
+};
+const std::unordered_map<std::string, TokenType> keywordMap{
+    {"int", TokenType::INTEGER_KEYWORD}, {"string", TokenType::STRING_KEYWORD},
+    {"bool", TokenType::BOOL_KEYWORD},
+
+    {"true", TokenType::TRUE_LIT},       {"false", TokenType::FALSE_LIT},
+};
+} // namespace Lexer
+
 Lexer::Token Lexer::Lexer::Lex() {
-  if (!hasLookAhead) {
-    c = _input.get();
-  }
-  hasLookAhead = false;
-
-  // skip whitespace
-  while (c == ' ' || c == '\t' || c == '\n') {
-    c = _input.get();
-  }
-
-  switch (c) {
-  case '(':
-    return Token(TokenType::LPAREN, "(");
-  case ')':
-    return Token(TokenType::RPAREN, ")");
-  case '{':
-    return Token(TokenType::LBRACE, "{");
-  case '}':
-    return Token(TokenType::RBRACE, "}");
-  case ';':
-    return Token(TokenType::SEMICOLON, ";");
-  case '+':
-    return Token(TokenType::PLUS, "+");
-  case '-':
-    return Token(TokenType::MINUS, "-");
-  case '*':
-    return Token(TokenType::MUL, "*");
-  case '/':
-    return Token(TokenType::DIV, "/");
-  case '%':
-    return Token(TokenType::MOD, "%");
-  case '=':
-    c = _input.get();
-    if (c == '=')
-      return Token(TokenType::EQUAL_EQUAL, "==");
-    else {
-      hasLookAhead = true;
-      return Token(TokenType::ASSIGNMENT, "=");
-    }
-  case '!':
-    c = _input.get();
-    if (c == '=') {
-      return Token(TokenType::BANG_EQUAL, "!=");
-    } else {
-      hasLookAhead = true;
-      return Token(TokenType::BANG, "!=");
-    }
-  case '>':
-    c = _input.get();
-    if (c == '=')
-      return Token(TokenType::GREATER_EQUAL, ">=");
-    else {
-      hasLookAhead = true;
-      return Token(TokenType::GREATER, ">");
-    }
-  case '<':
-    c = _input.get();
-    if (c == '=')
-      return Token(TokenType::LESS_EQUAL, "<=");
-    else {
-      hasLookAhead = true;
-      return Token(TokenType::LESS, "<");
-    }
-  case EOF:
+  /// Removes white space
+  while (Match({' ', '\t', '\n'}))
+    ;
+  if (IsAtEnd()) {
     return Token(TokenType::EOF_, "");
-  default:
-    if (isdigit(c)) {
-      std::string lexeme = "";
-      // TODO: add support for floating point numbers
-      while (isdigit(c)) {
-        lexeme += c;
-        c = _input.get();
-      }
-      hasLookAhead = true;
-      return Token(TokenType::INTEGER_LIT, lexeme);
-    } else if (c == '"') {
-      std::string lexeme = "";
-      c = _input.get(); // consumes opening quotes
-      while (c != '"') {
-        lexeme += c;
-        c = _input.get();
-      }
-      // NOTE: Let the next Lex() call consume the closing quote
-      // _input.get(); // consumes closing quotes
-      return Token(TokenType::STRING_LIT, lexeme);
-    } else if (isalpha(c)) { // It is either an identifier or keyword
-      std::string lexeme = "";
-      while (isalpha(c) || isdigit(c)) {
-        lexeme += c;
-        c = _input.get();
-      }
-      hasLookAhead = true;
+  }
 
-      // TODO: avoid using hardcoded keywords
-      if (lexeme == "int") {
-        return Token(TokenType::INTEGER_KEYWORD, lexeme);
-      } else if (lexeme == "string") {
-        return Token(TokenType::STRING_KEYWORD, lexeme);
-      } else if (lexeme == "bool") {
-        return Token(TokenType::BOOL_KEYWORD, lexeme);
-      } else if (lexeme == "true") {
-        return Token(TokenType::TRUE_LIT, lexeme);
-      } else if (lexeme == "false") {
-        return Token(TokenType::FALSE_LIT, lexeme);
-      }
+  TokenType _tokenType;
+  std::string _lexeme;
+  auto simpleType = simpleSymbolMap.find(c);
+  if (simpleType != simpleSymbolMap.end()) {
+    _tokenType = simpleType->second;
+    _lexeme = simpleType->first;
+    Advance();
+  } else if (Match('=')) {
+    _tokenType = TokenType::ASSIGNMENT;
+    _lexeme = "=";
+    if (Match('=')) {
+      _tokenType = TokenType::EQUAL_EQUAL;
+      _lexeme = "==";
+    }
+  } else if (Match('!')) {
+    _tokenType = TokenType::BANG;
+    _lexeme = "!";
+    if (Match('=')) {
+      _tokenType = TokenType::BANG_EQUAL;
+      _lexeme = "!=";
+    }
+  } else if (Match('>')) {
+    _tokenType = TokenType::GREATER;
+    _lexeme = ">";
+    if (Match('=')) {
+      _tokenType = TokenType::GREATER_EQUAL;
+      _lexeme = ">=";
+    }
+  } else if (Match('<')) {
+    _tokenType = TokenType::LESS;
+    _lexeme = "<";
+    if (Match('=')) {
+      _tokenType = TokenType::LESS_EQUAL;
+      _lexeme = "<=";
+    }
+  } else if (isdigit(c)) {
+    std::string lexeme = "";
+    // Parse Int Literal
+    // TODO: add support for floating point numbers
+    while (isdigit(c)) {
+      lexeme += c;
+      Advance();
+    }
+    _tokenType = TokenType::INTEGER_LIT;
+    _lexeme = lexeme;
+  } else if (Match('"')) {
+    // Parse String Literal
+    std::string lexeme = "";
+    while (!Match('"')) {
+      lexeme += c;
+      Advance();
+    }
+    _tokenType = TokenType::STRING_LIT;
+    _lexeme = lexeme;
+  } else if (isalpha(c)) { // It is either an identifier or keyword
+    std::string lexeme = "";
+    while (isalpha(c) || isdigit(c)) {
+      lexeme += c;
+      Advance();
+    }
+    _tokenType = TokenType::IDENTIFIER;
+    _lexeme = lexeme;
 
-      return Token(TokenType::IDENTIFIER, lexeme);
+    // TODO: avoid using hardcoded keywords
+    auto it = keywordMap.find(lexeme);
+    if (it != keywordMap.end()) {
+      _tokenType = it->second;
     }
   }
-  return Token(TokenType::EOF_, "Shouldn't get here");
+  return Token(_tokenType, _lexeme);
 }
+
+char Lexer::Lexer::Advance() {
+  char prev = c;
+  c = _input.get();
+  return prev;
+}
+
+bool Lexer::Lexer::Check(char c) { return c == this->c; }
+
+bool Lexer::Lexer::Match(char c) {
+  bool isMatch = Check(c);
+  if (isMatch)
+    Advance();
+  return isMatch;
+}
+
+bool Lexer::Lexer::Match(const std::vector<char> &characters) {
+  for (const char &c : characters) {
+    if (Check(c)) {
+      Advance();
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Lexer::Lexer::IsAtEnd() { return _input.eof(); }
