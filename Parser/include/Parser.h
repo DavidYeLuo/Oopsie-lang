@@ -74,21 +74,6 @@ public:
   void Accept(Visitor &visitor) override { visitor.VisitLiteralExpr(*this); }
 };
 
-class AstPrinter : public Visitor {
-public:
-  AstPrinter(std::ostream &ss) : ss(ss) {}
-  void VisitUnaryExpr(Unary &expr) override;
-  void VisitBinaryExpr(Binary &expr) override;
-  void VisitGroupingExpr(Grouping &expr) override;
-  void VisitLiteralExpr(Literal<int> &expr) override;
-  void VisitLiteralExpr(Literal<std::string> &expr) override;
-  void VisitLiteralExpr(Literal<bool> &expr) override;
-
-private:
-  std::ostream &ss;
-  void Parenthesize(std::string name, std::initializer_list<Expr *> exprs);
-};
-
 class ParseError : public std::exception {
 public:
   std::string msg;
