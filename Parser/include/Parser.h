@@ -89,17 +89,30 @@ private:
   void Parenthesize(std::string name, std::initializer_list<Expr *> exprs);
 };
 
+class ParseError : public std::exception {
+public:
+  std::string msg;
+  Lexer::Token token;
+
+  ParseError(Lexer::Token token, std::string msg) : token(token), msg(msg) {}
+  const char *what() const noexcept override { return msg.c_str(); }
+};
 class RecursiveDescentParser {
 public:
   RecursiveDescentParser(const std::vector<Lexer::Token> tokens)
-      : tokens(tokens) {
+      : tokens(tokens), didError(false) {
     current = 0;
   }
+  bool HasError() const { return didError; }
+  std::string GetErrorMsg() const { return errorMsg; }
+
   std::unique_ptr<Expr> Parse();
 
 private:
   const std::vector<Lexer::Token> tokens;
   int current;
+  bool didError;
+  std::string errorMsg;
 
   // Parsing
   std::unique_ptr<Expr> Expression();

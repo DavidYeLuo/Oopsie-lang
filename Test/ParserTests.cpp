@@ -26,4 +26,47 @@ TEST(ParserTest, ExpressionTest) {
   ASSERT_EQ(printer_ss.str(), "(* (- (int 123)) (group (int 45)))");
 }
 
+TEST(ParserErrorTest, ExpectEndParenthesis) {
+  constexpr char input[] = "-123 * (45";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+  std::vector<Lexer::Token> tokens;
+  Lexer::Token token = lexer.Lex();
+  while (token.type != Lexer::TokenType::EOF_) {
+    tokens.push_back(token);
+    token = lexer.Lex();
+  }
+  tokens.push_back(token);
+  Parser::RecursiveDescentParser parser(tokens);
+
+  std::stringstream printer_ss;
+  Parser::AstPrinter printer(printer_ss);
+
+  std::unique_ptr<Parser::Expr> expr = parser.Parse();
+
+  ASSERT_EQ(parser.HasError(), true);
+  ASSERT_EQ(parser.GetErrorMsg(), "Expect ')' after expression.");
+}
+
+TEST(ParserErrorTest, ValidParenthesis) {
+  constexpr char input[] = "-123 * (45)";
+  std::stringstream ss(input);
+  Lexer::Lexer lexer(ss);
+  std::vector<Lexer::Token> tokens;
+  Lexer::Token token = lexer.Lex();
+  while (token.type != Lexer::TokenType::EOF_) {
+    tokens.push_back(token);
+    token = lexer.Lex();
+  }
+  tokens.push_back(token);
+  Parser::RecursiveDescentParser parser(tokens);
+
+  std::stringstream printer_ss;
+  Parser::AstPrinter printer(printer_ss);
+
+  std::unique_ptr<Parser::Expr> expr = parser.Parse();
+
+  ASSERT_EQ(parser.HasError(), false);
+}
+
 } // namespace
