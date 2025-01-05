@@ -1,9 +1,12 @@
 # Oopsie
 
-What would it be like if we had an OOP language but without inheritance? Not sure either...
+A learning project for creating a Lox interpreter using C++.
+
+## Sources
+### Books
+Crafting Interpreters by Robert Nystrom
 
 ## Requirements
 
 - CMake
-- LLVM
 - CLang
