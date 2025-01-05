@@ -2,7 +2,19 @@
 #include "Lexer.h"
 
 std::unique_ptr<Parser::Expr> Parser::RecursiveDescentParser::Parse() {
-  return Expression();
+  std::unique_ptr<Parser::Expr> expr;
+  try {
+    expr = Expression();
+  } catch (ParseError &e) {
+    expr = nullptr;
+    didError = true;
+    errorMsg = e.what();
+  } catch (std::exception &e) {
+    expr = nullptr;
+    didError = true;
+    errorMsg = e.what();
+  }
+  return expr;
 }
 //
 std::unique_ptr<Parser::Expr> Parser::RecursiveDescentParser::Expression() {
@@ -78,8 +90,7 @@ std::unique_ptr<Parser::Expr> Parser::RecursiveDescentParser::Primary() {
     Consume(Lexer::TokenType::RPAREN, "Expect ')' after expression.");
     expr_ = std::make_unique<Parser::Grouping>(std::move(group));
   } else {
-    // TODO: Handle error properly
-    printf("Not a Non terminal. (%s)\n", Peek().lexeme.c_str());
+    throw ParseError(Peek(), "Not a terminal");
   }
   return expr_;
 }
@@ -119,6 +130,5 @@ Lexer::Token Parser::RecursiveDescentParser::Consume(Lexer::TokenType type,
                                                      std::string msg) {
   if (Check(type))
     return Advance();
-  printf("Parse Error: %s\n", msg.c_str());
-  return Lexer::Token(Lexer::TokenType::EOF_, msg);
+  throw ParseError(Peek(), msg);
 }
