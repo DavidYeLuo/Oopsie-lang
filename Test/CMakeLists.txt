@@ -16,6 +16,7 @@ add_executable(Tests)
 target_sources(Tests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/LexerTests.cpp)
 target_sources(Tests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/ParserTests.cpp)
 target_sources(Tests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/AstPrinterTests.cpp)
+target_sources(Tests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/AstEvaluatorTests.cpp)
 
 include(GoogleTest)
 gtest_discover_tests(Tests)
