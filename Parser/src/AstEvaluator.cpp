@@ -3,21 +3,20 @@
 #include <exception>
 namespace Parser {
 std::string AstEvaluator::Eval(Expr &expr) {
+  ret.clear(); // In case we evaluate again but expr is changed and the object
+               // is reused
   expr.Accept(*this);
   Data data = ret[&expr];
   std::string result = "";
   switch (data.dataType) {
-  case Lexer::INTEGER_LIT:
+  case EvalType::INTEGER:
     result = std::to_string(data.intData);
     break;
-  case Lexer::STRING_LIT:
+  case EvalType::STRING:
     result = data.stringData;
     break;
-  case Lexer::TRUE_LIT:
-    result = "true";
-    break;
-  case Lexer::FALSE_LIT:
-    result = "false";
+  case EvalType::BOOL:
+    result = std::to_string(data.boolData);
     break;
   default:
     throw std::runtime_error("Unknown data type: " +
@@ -33,13 +32,12 @@ void AstEvaluator::VisitUnaryExpr(Unary &expr) {
   Data temp;
   switch (expr.op.type) {
   case Lexer::TokenType::MINUS:
-    temp.dataType = Lexer::TokenType::INTEGER_LIT;
+    temp.dataType = EvalType::INTEGER;
     temp.intData = d.intData * -1;
     break;
   case Lexer::TokenType::BANG:
+    temp.dataType = EvalType::BOOL;
     temp.boolData = !d.boolData;
-    temp.dataType = temp.boolData ? Lexer::TokenType::TRUE_LIT
-                                  : Lexer::TokenType::FALSE_LIT;
     break;
   default:
     throw std::runtime_error("Unknown unary operator: " + expr.op.lexeme);
@@ -54,24 +52,24 @@ void AstEvaluator::VisitBinaryExpr(Binary &expr) {
   Data temp;
 
   switch (expr.op.type) {
-  case Lexer::PLUS:
-    temp.dataType = Lexer::INTEGER_LIT;
+  case Lexer::TokenType::PLUS:
+    temp.dataType = EvalType::INTEGER;
     temp.intData = l.intData + r.intData;
     break;
-  case Lexer::MINUS:
-    temp.dataType = Lexer::INTEGER_LIT;
+  case Lexer::TokenType::MINUS:
+    temp.dataType = EvalType::INTEGER;
     temp.intData = l.intData - r.intData;
     break;
-  case Lexer::MUL:
-    temp.dataType = Lexer::INTEGER_LIT;
+  case Lexer::TokenType::MUL:
+    temp.dataType = EvalType::INTEGER;
     temp.intData = l.intData * r.intData;
     break;
-  case Lexer::DIV:
-    temp.dataType = Lexer::INTEGER_LIT;
+  case Lexer::TokenType::DIV:
+    temp.dataType = EvalType::INTEGER;
     temp.intData = l.intData / r.intData;
     break;
-  case Lexer::MOD:
-    temp.dataType = Lexer::INTEGER_LIT;
+  case Lexer::TokenType::MOD:
+    temp.dataType = EvalType::INTEGER;
     temp.intData = l.intData % r.intData;
     break;
   default:
@@ -86,20 +84,19 @@ void AstEvaluator::VisitGroupingExpr(Grouping &expr) {
 }
 void AstEvaluator::VisitLiteralExpr(Literal<int> &expr) {
   Data temp;
-  temp.dataType = Lexer::TokenType::INTEGER_LIT;
+  temp.dataType = EvalType::INTEGER;
   temp.intData = expr.value;
   ret[&expr] = temp;
 }
 void AstEvaluator::VisitLiteralExpr(Literal<std::string> &expr) {
   Data temp;
-  temp.dataType = Lexer::TokenType::STRING_LIT;
+  temp.dataType = EvalType::INTEGER;
   temp.stringData = expr.value;
   ret[&expr] = temp;
 }
 void AstEvaluator::VisitLiteralExpr(Literal<bool> &expr) {
   Data temp;
-  temp.dataType =
-      expr.value ? Lexer::TokenType::TRUE_LIT : Lexer::TokenType::FALSE_LIT;
+  temp.dataType = EvalType::BOOL;
   temp.boolData = expr.value;
   ret[&expr] = temp;
 }
