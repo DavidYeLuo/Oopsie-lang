@@ -19,8 +19,7 @@ std::string AstEvaluator::Eval(Expr &expr) {
     result = std::to_string(data.boolData);
     break;
   default:
-    throw std::runtime_error("Unknown data type: " +
-                             std::to_string(data.dataType));
+    throw EvalError(data, "Unknown Datatype.");
     result = "";
     break;
   }
@@ -32,15 +31,13 @@ void AstEvaluator::VisitUnaryExpr(Unary &expr) {
   Data temp;
   switch (expr.op.type) {
   case Lexer::TokenType::MINUS:
-    temp.dataType = EvalType::INTEGER;
-    temp.intData = d.intData * -1;
+    temp = Data(d.intData * -1);
     break;
   case Lexer::TokenType::BANG:
-    temp.dataType = EvalType::BOOL;
-    temp.boolData = !d.boolData;
+    temp = Data(!d.boolData);
     break;
   default:
-    throw std::runtime_error("Unknown unary operator: " + expr.op.lexeme);
+    throw EvalError(d, "Unknown Unary Operator.");
   }
   ret[&expr] = temp;
 }
@@ -53,27 +50,22 @@ void AstEvaluator::VisitBinaryExpr(Binary &expr) {
 
   switch (expr.op.type) {
   case Lexer::TokenType::PLUS:
-    temp.dataType = EvalType::INTEGER;
-    temp.intData = l.intData + r.intData;
+    temp = Data(l.intData + r.intData);
     break;
   case Lexer::TokenType::MINUS:
-    temp.dataType = EvalType::INTEGER;
-    temp.intData = l.intData - r.intData;
+    temp = Data(l.intData - r.intData);
     break;
   case Lexer::TokenType::MUL:
-    temp.dataType = EvalType::INTEGER;
-    temp.intData = l.intData * r.intData;
+    temp = Data(l.intData * r.intData);
     break;
   case Lexer::TokenType::DIV:
-    temp.dataType = EvalType::INTEGER;
-    temp.intData = l.intData / r.intData;
+    temp = Data(l.intData / r.intData);
     break;
   case Lexer::TokenType::MOD:
-    temp.dataType = EvalType::INTEGER;
-    temp.intData = l.intData % r.intData;
+    temp = Data(l.intData % r.intData);
     break;
   default:
-    throw std::runtime_error("Unknown Binary operator: " + expr.op.lexeme);
+    throw EvalError(l, r, "Unknown Binary Operator");
   }
 
   ret[&expr] = temp;
@@ -83,21 +75,23 @@ void AstEvaluator::VisitGroupingExpr(Grouping &expr) {
   ret[&expr] = ret[expr.expression.get()];
 }
 void AstEvaluator::VisitLiteralExpr(Literal<int> &expr) {
-  Data temp;
-  temp.dataType = EvalType::INTEGER;
-  temp.intData = expr.value;
-  ret[&expr] = temp;
+  ret[&expr] = Data(expr.value);
 }
 void AstEvaluator::VisitLiteralExpr(Literal<std::string> &expr) {
-  Data temp;
-  temp.dataType = EvalType::INTEGER;
-  temp.stringData = expr.value;
-  ret[&expr] = temp;
+  ret[&expr] = Data(expr.value);
 }
 void AstEvaluator::VisitLiteralExpr(Literal<bool> &expr) {
-  Data temp;
-  temp.dataType = EvalType::BOOL;
-  temp.boolData = expr.value;
-  ret[&expr] = temp;
+  ret[&expr] = Data(expr.value);
+}
+bool AstEvaluator::CheckForNumber(Data &data) {
+  if (data.dataType == EvalType::INTEGER)
+    return true;
+  throw EvalError(data, "Param isn't a number");
+  return false;
+}
+bool AstEvaluator::CheckForNumber(Data &left, Data &right) {
+  if (CheckForNumber(left) && CheckForNumber(right))
+    return true;
+  return false;
 }
 } // namespace Parser
